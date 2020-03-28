@@ -87,6 +87,16 @@ function fillCorners()
 			fi
 	esac
 }
+function takeCenter()
+{
+	computerLetter=$1
+	compPlay=0
+	if [[ ${gameBoard[4]}==$IS_EMPTY ]]
+	then
+		gameBoard[4]=$computerLetter
+		compPlay=1
+	fi
+}
 function checkWin()
 {
 	letter=$1
