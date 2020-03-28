@@ -8,7 +8,7 @@ CROSS=1
 USER=0
 COMPUTER=1
 declare -a gameBoard
-gameBoard=(" " " " " " " " " " " " " " " " " ")
+gameBoard=("0" "1" "2" "3" "4" "5" "6" "7" "8")
 
 printf "Welcome to tic tac toe game \n"
 
@@ -84,32 +84,73 @@ function checkWin()
 	fi
 	echo $result
 }
-function getLetter()
+function computerTurn()
+{
+	computerLetter=$1
+	response=$((RANDOM%9))
+	if [[ "${gameBoard[$response]}"!=X && "${gameBoard[$response]}"!=O ]]
+	then
+		echo "Computer turn"
+		gameBoard[$response]="$computerLetter"
+		displayBoard
+	else
+		computerTurn $computerLetter
+	fi
+}
+function assignLetter()
 {
 	letterCheck=$((RANDOM%2))
 	case $letterCheck in
 		$DOT)
 			playerLetter=$O
+			computerLetter=$X
 		;;
 		$CROSS)
 			playerLetter=$X
+			computerLetter=$O
 		;;
 	esac
-	echo $playerLetter
 }
 function getTurn()
 {
 	firstTurn=$((RANDOM%2))
 	case $firstTurn in
 		$USER)
-			 printf "User plays first \n"
+			 echo "User plays first"
 		;;
 		$COMPUTER)
-			 printf "Computer plays first \n"
+			 echo "Computer plays first"
 		;;
 	esac
 }
-letter="$( getLetter )"
-getTurn
-playerTurn $letter
-checkWin $playerLetter
+displayBoard
+assignLetter
+chance="$(getTurn)"
+#checkWin $playerLetter
+flag=0
+if [[ "$chance"=="Computer plays first" ]]
+then
+	flag=1
+fi
+while((1))
+do
+	if [[ $flag%2==0 ]]
+	then
+		computerTurn $computerLetter
+		result="$(checkWin $computerLetter)"
+		if [[ $result=="wins" || $result=="draw" ]]
+		then
+			printf "Computer $result\n"
+			break
+		fi
+	else
+		playerTuen $playerLetter
+		result="$(checkWin $playerLetter)"
+		if [[$result=="wins" || $result=="draw" ]]
+		then
+			printf "Player $result \n"
+			break
+		fi
+	fi
+	flag=$((flag+1))
+done
