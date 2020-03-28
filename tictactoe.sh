@@ -31,46 +31,93 @@ function playerTurn()
 		if [[ "${gameBoard[$response]}"!=X || "${gameBoard[$response]}"!=O ]]
 		then
 			gameBoard[$response]="$playerLetter"
+			displayBoard
 		else
 			playerTurn $playerLetter
 		fi
 	else
-		printf "Invalid input \n"
+		printf "Invalid input\n"
 	fi
-	displayBoard
+}
+function fillCorners()
+{
+	local letter=$1
+	compPlay=0
+	randomCorner=$((RANDOM%4))
+	case $randomCorner in
+		0)
+			if [[ ${gameBoard[0]}==$IS_EMPTY ]]
+			then
+				gameBoard[0]=$computerLetter
+				compPlay=1
+				return
+			else
+				fillCorners $letter
+			fi
+		;;
+		1)
+			if [[ ${gameBoard[2]}==$IS_EMPTY ]]
+			then
+				gameBoard[2]=$computerLetter
+				compPlay=1
+				return
+			else
+				fillCorners $letter
+			fi 
+		;;
+		2)
+			if [[ ${gameBoard[6]}==$IS_EMPTY ]]
+			then
+				display[6]=$computerLetter
+				compPlay=1
+				return
+			else
+				fillCorners $letter
+			fi 
+		;;
+		3)
+			if [[ ${gameBoard[8]}==$IS_EMPTY ]]
+			then
+				gameBoard[2]=$computerLetter
+				compPlay=1
+				return
+			else
+				fillCorners $letter
+			fi
+	esac
 }
 function checkWin()
 {
 	letter=$1
-	if [ "${gameBoard[0]}${gameBoard[1]}${gameBoard[2]}"=="$letter$letter$letter" ]
+	if [[ "${gameBoard[0]}"==$letter && "${gameBoard[1]}"==$letter && "${gameBoard[2]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[3]}${gameBoard[4]}${gameBoard[5]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[3]}"==$letter && "${gameBoard[4]}"==$letter && "${gameBoard[5]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[6]}${gameBoard[7]}${gameBoard[8]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[6]}"==$letter && "${gameBoard[7]}"==$letter && "${gameBoard[8]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[0]}${gameBoard[3]}${gameBoard[6]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[0]}"==$letter && "${gameBoard[3]}"==$letter && "${gameBoard[6]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[1]}${gameBoard[4]}${gameBoard[7]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[1]}"==$letter && "${gameBoard[4]}"==$letter && "${gameBoard[7]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[2]}${gameBoard[5]}${gameBoard[8]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[2]}"==$letter && "${gameBoard[5]}"==$letter && "${gameBoard[8]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[0]}${gameBoard[4]}${gameBoard[8]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[0]}"==$letter && "${gameBoard[4]}"==$letter && "${gameBoard[8]}"==$letter ]]
 	then
 		result="wins"
-	elif [ "${gameBoard[2]}${gameBoard[4]}${gameBoard[6]}"=="$letter$letter$letter" ]
+	elif [[ "${gameBoard[2]}"==$letter && "${gameBoard[4]}"==$letter && "${gameBoard[6]}"==$letter ]]
 	then
 		result="wins"
 	else
 		flag=0
 		for((index=0;index<${#gameBoard[@]};index++))
 		do
-			if [[ "${gameBoard[$response]}"!=X || "${gameBoard[$response]}"!=O ]]
+			if [[ "${gameBoard[letter]}"!=X || "${gameBoard[letter]}"!=O ]]
 			then
 				flag=1
 			fi
@@ -90,32 +137,32 @@ function checkWinningMove()
 	index=0
 	while(($index<8))
 	do
-		if [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$((index+2))]} == $IS_EMPTY ]]
+		if [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+1))]}==$letter && ${gameBoard[$((index+2))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+2))]=$letter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+2))]}==$letter && ${gameBoard[$((index+1))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+1))]=$letter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$((index+2))]}==$letter && ${gameBoard[$((index+1))]}==$letter && ${gameBoard[$index]}==$IS_EMPTY ]]
 		then
 			gameBoard[$index]=$letter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+3))]}==$letter && ${gameBoard[$((index+6))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+6))]=$letter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$((index+3))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+6))]}==$letter && ${gameBoard[$((index+3))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+3))]=$letter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$((index+3))]}==$letter && ${gameBoard[$((index+6))]}==$letter && ${gameBoard[$index]}==$IS_EMPTY ]]
 		then
 			gameBoard[$index]=$letter
 			compPlay=1
@@ -123,33 +170,33 @@ function checkWinningMove()
 		fi
 		index=$((index+3))
 	done
-	if [[ ${gameBoard[0]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[8]} == $IS_EMPTY ]]
+	if [[ ${gameBoard[0]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[8]}==$IS_EMPTY ]]
 	then
 		gameBoard[8]=$letter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[0]} == $letter && ${gameBoard[8]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[0]}==$letter && ${gameBoard[8]}==$letter && ${gameBoard[4]}==$IS_EMPTY ]]
 	then
 		gameBoard[4]=$letter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[8]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[0]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[8]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[0]}==$IS_EMPTY ]]
 	then
 		gameBoard[0]=$letter
 		compPlay=1
 		return
 	fi
-	if [[ ${gameBoard[2]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[6]} == $IS_EMPTY ]]
+	if [[ ${gameBoard[2]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[6]}==$IS_EMPTY ]]
 	then
 		gameBoard[6]=$letter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[2]} == $letter && ${gameBoard[6]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[2]}==$letter && ${gameBoard[6]}==$letter && ${gameBoard[4]}==$IS_EMPTY ]]
 	then
 		gameBoard[4]=$letter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[6]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[2]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[6]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[2]}==$IS_EMPTY ]]
 	then
 		gameBoard[2]=$letter
 		compPlay=1
@@ -164,32 +211,32 @@ function blockPlayerWin()
 	index=0
 	while(($index<8))
 	do
-		if [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$((index+2))]} == $IS_EMPTY ]]
+		if [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+1))]}==$letter && ${gameBoard[$((index+2))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+2))]=$computerLetter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+2))]}==$letter && ${gameBoard[$((index+1))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+1))]=$computerLetter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$((index+2))]}==$letter && ${gameBoard[$((index+1))]}==$letter && ${gameBoard[$index]}==$IS_EMPTY ]]
 		then
 			gameBoard[$index]=$computerLetter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+3))]}==$letter && ${gameBoard[$((index+6))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+6))]=$computerLetter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$((index+3))]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$index]}==$letter && ${gameBoard[$((index+6))]}==$letter && ${gameBoard[$((index+3))]}==$IS_EMPTY ]]
 		then
 			gameBoard[$((index+3))]=$computerLetter
 			compPlay=1
 			return
-		elif [[ ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		elif [[ ${gameBoard[$((index+3))]}==$letter && ${gameBoard[$((index+6))]}==$letter && ${gameBoard[$index]}==$IS_EMPTY ]]
 		then
 			gameBoard[$index]=$computerLetter
 			compPlay=1
@@ -197,33 +244,33 @@ function blockPlayerWin()
 		fi
 		index=$((index+3))
 	done
-	if [[ ${gameBoard[0]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[8]} == $IS_EMPTY ]]
+	if [[ ${gameBoard[0]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[8]}==$IS_EMPTY ]]
 	then
 		gameBoard[8]=$computerLetter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[0]} == $letter && ${gameBoard[8]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[0]}==$letter && ${gameBoard[8]}==$letter && ${gameBoard[4]}==$IS_EMPTY ]]
 	then
 		gameBoard[4]=$computerLetter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[8]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[0]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[8]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[0]}==$IS_EMPTY ]]
 	then
 		gameBoard[0]=$computerLetter
 		compPlay=1
 		return
 	fi
-	if [[ ${gameBoard[2]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[6]} == $IS_EMPTY ]]
+	if [[ ${gameBoard[2]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[6]}==$IS_EMPTY ]]
 	then
 		gameBoard[6]=$computerLetter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[2]} == $letter && ${gameBoard[6]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[2]}==$letter && ${gameBoard[6]}==$letter && ${gameBoard[4]}==$IS_EMPTY ]]
 	then
 		gameBoard[4]=$computerLetter
 		compPlay=1
 		return
-	elif [[ ${gameBoard[6]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[2]} == $IS_EMPTY ]]
+	elif [[ ${gameBoard[6]}==$letter && ${gameBoard[4]}==$letter && ${gameBoard[2]}==$IS_EMPTY ]]
 	then
 		gameBoard[2]=$computerLetter
 		compPlay=1
@@ -235,6 +282,7 @@ function computerTurn()
 	computerLetter=$1
 	playerLetter=$2
 	compPlay=0
+	echo "Computer turn: "
 	checkWinningMove $computerLetter
 	if(($compPlay==0))
 	then
@@ -242,10 +290,13 @@ function computerTurn()
 	fi
 	if(($compPlay==0))
 	then
-		read response
-   	#response=$((RANDOM%9))
+		fillCorners $computerLetter
+	fi
+	if(($compPlay==0))
+	then
+   	response=$((RANDOM%9))
    	#IF NO VALUE IS ASSIGN TO THE INDEX THEN GO AHEAD ELSE RETURN FUCTION
-		if [ "${display[$response]}" != X ] && [ "${display[$response]}" != O ]
+		if [[ "${display[$response]}"!=X  &&  "${display[$response]}"!=O ]]
 		then
 			echo "Computer turn: "
 			gameBoard[$response]="$computerLetter"
