@@ -21,6 +21,7 @@ function displayBoard()
 	echo "		-----------"
 	echo "		${gameBoard[6]}  | ${gameBoard[7]} | ${gameBoard[8]}"
 }
+
 function playerTurn()
 {
 	playerLetter=$1
