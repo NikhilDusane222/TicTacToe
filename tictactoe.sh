@@ -21,7 +21,6 @@ function displayBoard()
 	echo "		-----------"
 	echo "		${gameBoard[6]}  | ${gameBoard[7]} | ${gameBoard[8]}"
 }
-
 function playerTurn()
 {
 	playerLetter=$1
@@ -96,6 +95,54 @@ function takeCenter()
 		gameBoard[4]=$computerLetter
 		compPlay=1
 	fi
+}
+function takeSides()
+{
+	local letter=$1
+	compPlay=0
+	randomCorner=$((RANDOM%4))
+	case $randomCorner in
+	0)
+		if [[ ${gameBoard[1]}==$IS_EMPTY ]]
+		then
+			gameBoard[1]=$letter
+			compPlay=1
+			return
+		else
+			fillCorners $letter
+		fi
+	;;
+	1)
+		if [[ ${gameBoard[3]}==$IS_EMPTY ]]
+		then
+			gameBoard[3]=$letter
+			compPlay=1
+			return
+		else
+			fillCorners $letter
+		fi
+	;;
+	2)
+		if [[ ${gameBoard[5]}==$IS_EMPTY ]]
+		then
+			gameBoard[5]=$letter
+			compPlay=1
+			return
+		else
+			fillCorners $letter
+		fi 
+	;;
+	3)
+		if [[ ${gameBoard[7]}==$IS_EMPTY ]]
+		then
+			gameBoard[7]=$letter
+			compPlay=1
+			return
+		else
+			fillCorners $letter
+		fi
+	;;
+	esac
 }
 function checkWin()
 {
@@ -305,15 +352,11 @@ function computerTurn()
 	fi
 	if(($compPlay==0))
 	then
-   	response=$((RANDOM%9))
-   	#IF NO VALUE IS ASSIGN TO THE INDEX THEN GO AHEAD ELSE RETURN FUCTION
-		if [[ "${display[$response]}"!=X  &&  "${display[$response]}"!=O ]]
-		then
-			echo "Computer turn: "
-			gameBoard[$response]="$computerLetter"
-		else
-			computerTurn $computerLetter
-		fi
+		takeCenter $computerLetter
+	fi
+	if(($compPlay==0))
+	then
+		takeSides $computerLetter
 	fi
 	displayBoard
 }
@@ -323,28 +366,28 @@ function alternatePlay()
 	flag=0
 	if [[ "$chance"=="computerchance" ]]
 	then
-   	flag=1
+		flag=1
 	fi
 	while((0==0))
 	do
    	if [[ $flag%2==0 ]]
    	then
-      	computerTurn $computerLetter
-      	result="$(checkWin $computerLetter)"
-      	if [[ $result=="wins" || $result=="draw" ]]
-      	then
-         	printf "Computer $result\n"
-         	break
-      	fi
-   	else
-      	playerTurn $playerLetter
-      	result="$(checkWin $playerLetter)"
-      	if [[$result=="wins" || $result=="draw" ]]
-      	then
-         	printf "Player $result \n"
-         	break
-      	fi
-   	fi
+			computerTurn $computerLetter $playerLetter
+			result="$(checkWin $computerLetter)"
+			if [[ $result=="wins" || $result=="draw" ]]
+			then
+				printf "Computer $result\n"
+				break
+			fi
+		else
+			playerTurn $playerLetter
+			result="$(checkWin $playerLetter)"
+			if [[$result=="wins" || $result=="draw" ]]
+			then
+				printf "Player $result \n"
+				break
+			fi
+		fi
 		flag=$((flag+1))
 	done
 }
@@ -374,6 +417,7 @@ function firstChance()
 		;;
 	esac
 }
+
 displayBoard
 assignLetter
 alternatePlay
