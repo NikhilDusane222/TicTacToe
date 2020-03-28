@@ -84,6 +84,78 @@ function checkWin()
 	fi
 	echo $result
 }
+function checkWinningMove()
+{
+	local letter=$1
+	index=0
+	while(($index<8))
+	do
+		if [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$((index+2))]} == $IS_EMPTY ]]
+		then
+			gameBoard[$((index+2))]=$letter
+			compPlay=1
+			return
+		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $IS_EMPTY ]]
+		then
+			gameBoard[$((index+1))]=$letter
+			compPlay=1
+			return
+		elif [[ ${gameBoard[$((index+2))]} == $letter && ${gameBoard[$((index+1))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		then
+			gameBoard[$index]=$letter
+			compPlay=1
+			return
+		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $IS_EMPTY ]]
+		then
+			gameBoard[$((index+6))]=$letter
+			compPlay=1
+			return
+		elif [[ ${gameBoard[$index]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$((index+3))]} == $IS_EMPTY ]]
+		then
+			gameBoard[$((index+3))]=$letter
+			compPlay=1
+			return
+		elif [[ ${gameBoard[$((index+3))]} == $letter && ${gameBoard[$((index+6))]} == $letter && ${gameBoard[$index]} == $IS_EMPTY ]]
+		then
+			gameBoard[$index]=$letter
+			compPlay=1
+			return
+		fi
+		index=$((index+3))
+	done
+	if [[ ${gameBoard[0]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[8]} == $IS_EMPTY ]]
+	then
+		gameBoard[8]=$letter
+		compPlay=1
+		return
+	elif [[ ${gameBoard[0]} == $letter && ${gameBoard[8]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	then
+		gameBoard[4]=$letter
+		compPlay=1
+		return
+	elif [[ ${gameBoard[8]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[0]} == $IS_EMPTY ]]
+	then
+		gameBoard[0]=$letter
+		compPlay=1
+		return
+	fi
+	if [[ ${gameBoard[2]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[6]} == $IS_EMPTY ]]
+	then
+		gameBoard[6]=$letter
+		compPlay=1
+		return
+	elif [[ ${gameBoard[2]} == $letter && ${gameBoard[6]} == $letter && ${gameBoard[4]} == $IS_EMPTY ]]
+	then
+		gameBoard[4]=$letter
+		compPlay=1
+		return
+	elif [[ ${gameBoard[6]} == $letter && ${gameBoard[4]} == $letter && ${gameBoard[2]} == $IS_EMPTY ]]
+	then
+		gameBoard[2]=$letter
+		compPlay=1
+		return
+	fi
+}
 function computerTurn()
 {
 	computerLetter=$1
@@ -111,28 +183,27 @@ function assignLetter()
 		;;
 	esac
 }
-function getTurn()
+function firstChance()
 {
-	firstTurn=$((RANDOM%2))
+	chanceCheck=$((RANDOM%2))
 	case $firstTurn in
 		$USER)
-			 echo "User plays first"
+			 echo "playerchance"
 		;;
 		$COMPUTER)
-			 echo "Computer plays first"
+			 echo "computerchance"
 		;;
 	esac
 }
 displayBoard
 assignLetter
-chance="$(getTurn)"
-#checkWin $playerLetter
+chance="$(firstChance)"
 flag=0
-if [[ "$chance"=="Computer plays first" ]]
+if [[ "$chance"=="computerchance" ]]
 then
 	flag=1
 fi
-while((1))
+while((0==0))
 do
 	if [[ $flag%2==0 ]]
 	then
